@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>JSPServletTest</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+  	<servlet-name>HiServletsss</servlet-name>
+  	<servlet-class>ezen.edu.com.HiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>HiServletsss</servlet-name>
+  	<url-pattern>/mainPage</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  	<servlet-name>MyMemberAdd</servlet-name>
+  	<servlet-class>ezen.edu.com.MyMemberAddServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>MyMemberAdd</servlet-name>
+  	<url-pattern>/mymember/add</url-pattern>
+  </servlet-mapping>
+    
+</web-app>
