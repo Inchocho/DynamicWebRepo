@@ -40,7 +40,7 @@ public class TestServlet7 extends HttpServlet{
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding("UTF-8");
 		
-		//RequestDispatcher를 통해 /Test7.jsp로 객체를 응답할 URL로 전달 (요청 전달)
+		//RequestDispatcher를 통해 /Test7.jsp로 객체를 응답할 URL로 전달 (요청 전달) 및 해당 URL로 이동
 		//RequestDispatcher rd = request.getRequestDispatcher (responseURL);
 		//responseURL은 상대경로로 작성함 대체로(즉 원래대로면 jsp파일 경로가 test폴더 하위에 있는게 좋음)
 		RequestDispatcher dispatcher =
