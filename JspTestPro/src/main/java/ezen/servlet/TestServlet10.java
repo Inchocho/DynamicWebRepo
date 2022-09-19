@@ -14,7 +14,7 @@ public class TestServlet10 extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req,
 		HttpServletResponse resp) throws ServletException, IOException {
-
+		
 		//<input type="text" name="firstTxt" value="">
 		//doPost방식에서는 name(firstTxt)이 파라미터라고 생각하면 된다
 		String firstTxt = req.getParameter("firstTxt");
