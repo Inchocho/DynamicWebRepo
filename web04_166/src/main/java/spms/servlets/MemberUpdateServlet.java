@@ -84,7 +84,7 @@ public class MemberUpdateServlet extends HttpServlet {
 
 			rd = req.getRequestDispatcher("./MemberUpdateForm.jsp");
 			
-			rd.include(req, res);
+			rd.forward(req, res);
 
 		} catch (Exception e) {
 			e.printStackTrace();
