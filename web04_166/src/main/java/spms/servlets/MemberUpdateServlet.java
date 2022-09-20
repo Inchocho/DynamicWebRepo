@@ -33,6 +33,7 @@ public class MemberUpdateServlet extends HttpServlet {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
+		//반복사용되는 RequestDispatcher타입 객체를 생성함
 		RequestDispatcher rd = null;
 
 		int mNo = 0;
