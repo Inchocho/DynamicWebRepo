@@ -48,7 +48,9 @@ public class MemberUpdateServlet extends HttpServlet {
 
 			conn = (Connection) sc.getAttribute("conn");
 
-			sql = "SELECT MNO, PWD, MNAME, EMAIL, CRE_DATE" + " FROM MEMBERS" + " WHERE MNO = ?";
+			sql = "SELECT MNO, PWD, MNAME, EMAIL, CRE_DATE"
+				+ " FROM MEMBERS"
+				+ " WHERE MNO = ?";
 
 			System.out.println("쿼리 수행 성공");
 			// ?랑 pstmt는 짝꿍 ?에 들어갈값을 넣는방법
