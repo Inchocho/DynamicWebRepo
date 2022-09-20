@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import spms.dto.MemberDto;
 
 //@WebServlet(value ="주소")를 통해 web.xml에서 서블릿선언,맵핑과정을 단축함
-@WebServlet(value = "/member/list")
+@WebServlet(value="/member/list")
 //MVC패턴중 실제업무를 수행하는 MODEL
 public class MemberListServlet extends HttpServlet{
 	
@@ -35,25 +35,12 @@ public class MemberListServlet extends HttpServlet{
 		  Statement stmt = null;	
 		  ResultSet rs = null;
 		
-		  String driver = "";
-		  String url = "";
-		  String user = "";
-		  String password = "";
-		  
-
 		try {
+			//ServletContext를 통해 AppInitServlet에 담긴 sc.setAttribute("conn", conn); (DB연결정보)
+			//를 가져와서 사용 (DB연결 user / pwd / driver정보등 공통정보를 가져와서사용
 		    ServletContext sc = this.getServletContext();
-		      
-		    driver = sc.getInitParameter("driver");
-		    url = sc.getInitParameter("url");
-		    user = sc.getInitParameter("user");
-		    password = sc.getInitParameter("password");
-			
-		    System.out.println("오라클 드라이버 로드 성공");
-		    Class.forName(driver);
-			
-		    System.out.println("오라클 드라이버 연결 성공");
-		    conn = DriverManager.getConnection(url, user, password);
+		    
+		    conn = (Connection)sc.getAttribute("conn");
 			
 			stmt = conn.createStatement();
 			
@@ -98,8 +85,9 @@ public class MemberListServlet extends HttpServlet{
 			
 			request.setAttribute("memberList", memberList);
 			
-			//javax.servlet.ServletException:File &quot not found 에러떴었음
-			//jsp 파일 경로 잘못지정해줘서 /member/MemberListView.jsp -> /MemberListView.jsp
+			//javax.servlet.ServletException:File &quot not found 에러떴었음 (경로에러임)
+			//RequestDispatcher를 통해 request,response객체의 값을 들고 
+			//MemberListView.jsp로 이동한다(그래서 jsp를 사용가능)
 			
 			RequestDispatcher dispatcher = 
 					request.getRequestDispatcher("/member/MemberListView.jsp");
@@ -107,8 +95,16 @@ public class MemberListServlet extends HttpServlet{
 			dispatcher.include(request, response);			
 			
 		} catch (Exception e) {
-			// TODO: handle exception
-			throw new ServletException(e);
+//			throw new ServletException(e); -> 개발자용
+			//에러확인하려고 서비스에서 오라클서비스랑 리스너 중지했었음
+			//예외발생시 키:error에 파라미터(매개변수) e를 담음(Exception e)
+			request.setAttribute("error", e);
+			
+			RequestDispatcher dispatcher = 
+					request.getRequestDispatcher("/Error.jsp");
+			
+			dispatcher.forward(request, response);
+			
 		} finally {
 			//	6단계 jdbc 객체 메모리 회수
 			//	rs(resultSet)가 null이 아니라면 rs를 종료(자원 회수)
@@ -131,15 +127,6 @@ public class MemberListServlet extends HttpServlet{
 				}
 			}
 			
-			if(conn != null) {
-				try {
-					conn.close();
-					System.out.println("db 연결 종료 자원 회수");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 		
 	}	      

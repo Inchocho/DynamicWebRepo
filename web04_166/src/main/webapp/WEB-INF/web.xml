@@ -22,6 +22,12 @@
   	<param-value>ezen</param-value>
   </context-param>
   
+  <servlet>
+  	<servlet-name>AppInitServlet</servlet-name>
+  	<servlet-class>spms.servlets.AppInitServlet</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
   <!-- encoding 필터 선언 -->
   <filter>
   	<filter-name>CharacterEncoding</filter-name>

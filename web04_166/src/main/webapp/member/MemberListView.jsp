@@ -14,22 +14,32 @@
 
 <body>
 
+	<jsp:include page="/Header.jsp"/>
 	<h1>회원목록</h1>
 	
 	<p>
 		<a href="./add">신규 회원 추가</a>
+		<a href="../auth/login">로그인 화면</a>
 	</p>	
+	
+	<jsp:useBean 
+		id="memberList"
+		scope="request"
+		class="java.util.ArrayList"
+		type="java.util.ArrayList<MemberDto>"
+	/>
 	
 	<!-- JSP문법임 -->	
 	<!-- MemberListServlet에서 전달받은 객체 memberList의 값을 
 		ArrayList<MemberDto> memberList = request.getAttribute(키값:"memberList");를 통해 담음
 	-->
 	
+<!--  java Bean으로 대체(기존 42라인 for문위에 존재) -->
+<!--  ARRAYLIST<MEMBERDTO> MEMBERLIST =  -->
+<!-- (ARRAYLIST<MEMBERDTO>)REQUEST.GETATTRIBUTE("MEMBERLIST"); -->
+	
 	<%
-		ArrayList<MemberDto> memberList = 
-			(ArrayList<MemberDto>)request.getAttribute("memberList");
 		for(MemberDto memberDto : memberList){
-			
 	%>
 	
 	<%=memberDto.getNo()%>,
@@ -41,6 +51,8 @@
 	<%
 		}
 	%>
+	
+	<jsp:include page="/Tail.jsp"/>
 </body>
 
 </html>
