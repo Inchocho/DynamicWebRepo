@@ -87,6 +87,7 @@ public class MemberUpdateServlet extends HttpServlet {
 			rd.forward(req, res);
 
 		} catch (Exception e) {
+			//printStackTrace() 개발자를 위한 오류 - 콘솔창에 오류가뜸
 			e.printStackTrace();
 			
 			req.setAttribute("error", e);
