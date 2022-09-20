@@ -75,6 +75,8 @@ public class MemberUpdateServlet extends HttpServlet {
 				creDate = rs.getDate("CRE_DATE");
 
 				// 4개의 파라미터를 갖는 생성자를 MemberDto에서 가져다 쓰면된다
+				// 각각의 상황에 맞는 생성자를 오버로딩해서 구현한다 (일일이 set할필요없음)
+				// 기존 코드 MemberDto memberDto = new MemberDto(); 이후 일일이 memberDto.setNo(mNo)~등 작업함
 				memberDto = new MemberDto(mno, mname, email, creDate);
 			}
 
