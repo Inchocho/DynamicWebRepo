@@ -10,6 +10,13 @@
 
 <title>회원정보 수정페이지</title>
 
+<script type="text/javascript">
+	function pageMoveListFnc(){
+		location.href = './list';		
+	}
+	
+</script>
+
 </head>
 
 <body>
@@ -17,25 +24,18 @@
 	<jsp:include page="/Header.jsp"/>
 	<h1>회원정보</h1>
 	
-	<jsp:useBean 
-		id="memberDto"
-		scope="request"
-		class="spms.dto.MemberDto"
-		type="spms.dto.MemberDto"
-	/>	
-	
 		<form action='update' method='post'>
 		번호:  <input type='text' name='mNo'
-			 value='<%=memberDto.getNo()%>' readonly><br>
+			 value='${memberDto.no}' readonly><br>
 		이름:  <input type='text' name='name'
-			 value='<%=memberDto.getName()%>'><br>
+			 value='${memberDto.name}'><br>
 		이메일: <input type='text' name='email'
-			 value='<%=memberDto.getEmail()%>'><br>
-		가입일: <%=memberDto.getCreateDate()%> <br>
+			 value='${memberDto.email}'><br>
+		가입일: ${requestScope.memberDto.createDate} <br>
 			  <input type='submit' value='저장'>
-			  <input type='reset' value='취소'>
+			  <input type='reset' value='취소' onclick='pageMoveListFnc();'>
 			  <input type='button' value='삭제'
-			  	 onclick='location.href="./delete?no=<%=memberDto.getNo()%>"'>			  			  			  
+			  	 onclick='location.href="./delete?no=0"'>			  			  			  
 		</form>	
 	
 	<jsp:include page="/Tail.jsp"/>
