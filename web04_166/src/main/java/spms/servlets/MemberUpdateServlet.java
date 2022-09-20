@@ -26,74 +26,75 @@ import spms.dto.MemberDto;
 public class MemberUpdateServlet extends HttpServlet {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		
-		  Connection conn = null;
-		  PreparedStatement pstmt = null;	
-		  ResultSet rs = null;
-		  
+		RequestDispatcher rd = null;
+
+		int mNo = 0;
+
+		String sql = "";
+
 		try {
-			int mNo = Integer.parseInt(req.getParameter("no"));
-			//ServletContext를 통해 AppInitServlet에 담긴 sc.setAttribute("conn", conn); (DB연결정보)
-			//를 가져와서 사용 (DB연결 user / pwd / driver정보등 공통정보를 가져와서사용
-		    ServletContext sc = this.getServletContext();
-		    
-		    conn = (Connection)sc.getAttribute("conn");
-			
-			String sql = "SELECT MNO, PWD, MNAME, EMAIL, CRE_DATE"
-					+ " FROM MEMBERS"
-					+ " WHERE MNO = ?";			
-			
+			mNo = Integer.parseInt(req.getParameter("no"));
+			// ServletContext를 통해 AppInitServlet에 담긴 sc.setAttribute("conn", conn); (DB연결정보)
+			// 를 가져와서 사용 (DB연결 user / pwd / driver정보등 공통정보를 가져와서사용
+			ServletContext sc = this.getServletContext();
+
+			conn = (Connection) sc.getAttribute("conn");
+
+			sql = "SELECT MNO, PWD, MNAME, EMAIL, CRE_DATE" + " FROM MEMBERS" + " WHERE MNO = ?";
+
 			System.out.println("쿼리 수행 성공");
+			// ?랑 pstmt는 짝꿍 ?에 들어갈값을 넣는방법
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, mNo);
-			
+
 			rs = pstmt.executeQuery();
-			
+
 			res.setContentType("text/html");
 			res.setCharacterEncoding("UTF-8");
-						
+
+			// 4개의 파라미터를 갖는 생성자를 dto에서 만들자 (MemberDto)
 			int mno = 0;
 			String mname = "";
 			String email = "";
 			Date creDate = null;
-			
-			while(rs.next()) {
+
+			MemberDto memberDto = null;
+
+			if (rs.next()) {
 				mno = rs.getInt("MNO");
 				mname = rs.getString("MNAME");
 				email = rs.getString("EMAIL");
 				creDate = rs.getDate("CRE_DATE");
-				
-				MemberDto memberDto = new MemberDto();
-				
-				memberDto.setNo(mno);
-				memberDto.setName(mname);
-				memberDto.setEmail(email);
-				memberDto.setCreateDate(creDate);
-				
-				req.setAttribute("memberDto", memberDto);
+
+				// 4개의 파라미터를 갖는 생성자를 MemberDto에서 가져다 쓰면된다
+				memberDto = new MemberDto(mno, mname, email, creDate);
 			}
-						
-			RequestDispatcher dispatcher = 
-					req.getRequestDispatcher("./MemberUpdateForm.jsp");
+
+			req.setAttribute("memberDto", memberDto);
+
+			rd = req.getRequestDispatcher("./MemberUpdateForm.jsp");
 			
-			dispatcher.include(req, res);			
-			
+			rd.include(req, res);
+
 		} catch (Exception e) {
-//			throw new ServletException(e); -> 개발자용
-			//에러확인하려고 서비스에서 오라클서비스랑 리스너 중지했었음
-			//예외발생시 키:error에 파라미터(매개변수) e를 담음(Exception e)
+			e.printStackTrace();
+			
 			req.setAttribute("error", e);
+
+			rd = req.getRequestDispatcher("/Error.jsp");
 			
-			RequestDispatcher dispatcher = 
-					req.getRequestDispatcher("/Error.jsp");
-			
-			dispatcher.forward(req, res);
-			
+			rd.forward(req, res);
 		} finally {
-			//	6단계 jdbc 객체 메모리 회수
-			//	rs(resultSet)가 null이 아니라면 rs를 종료(자원 회수)
-			if(rs != null) {
+			// 6단계 jdbc 객체 메모리 회수
+			// rs(resultSet)가 null이 아니라면 rs를 종료(자원 회수)
+			if (rs != null) {
 				try {
 					rs.close();
 					System.out.println("ResultSet 종료");
@@ -102,7 +103,7 @@ public class MemberUpdateServlet extends HttpServlet {
 					e.printStackTrace();
 				}
 			}
-			if(pstmt != null) {
+			if (pstmt != null) {
 				try {
 					pstmt.close();
 					System.out.println("쿼리 종료");
@@ -111,13 +112,14 @@ public class MemberUpdateServlet extends HttpServlet {
 					e.printStackTrace();
 				}
 			}
-			
+
 		}
-		
-	
+
 	}
+
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
 //	  이작업을 이제 필터로 처리할거임(9.16 Filter)

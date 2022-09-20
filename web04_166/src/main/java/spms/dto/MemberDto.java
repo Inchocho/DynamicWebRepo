@@ -31,6 +31,14 @@ public class MemberDto {
 		this.createDate = createDate;
 		this.modifiedDate = modifiedDate;
 	}
+		
+	public MemberDto(int no, String name, String email, Date createDate) {
+		super();
+		this.no = no;
+		this.name = name;
+		this.email = email;
+		this.createDate = createDate;
+	}
 
 	//우클릭 -> source -> getter/setter 전체 선택
 	public int getNo() {
