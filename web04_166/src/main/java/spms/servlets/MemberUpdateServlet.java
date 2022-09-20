@@ -7,8 +7,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,107 +19,103 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dto.MemberDto;
+
 //@WebServlet(value ="주소")를 통해 web.xml에서 서블릿선언,맵핑과정을 단축함
 @WebServlet(value="/member/update")
 public class MemberUpdateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		String myName = req.getParameter("myName");		
-
-		String sql = "";
-
+		
+		  Connection conn = null;
+		  PreparedStatement pstmt = null;	
+		  ResultSet rs = null;
+		  
 		try {
 			int mNo = Integer.parseInt(req.getParameter("no"));
+			//ServletContext를 통해 AppInitServlet에 담긴 sc.setAttribute("conn", conn); (DB연결정보)
+			//를 가져와서 사용 (DB연결 user / pwd / driver정보등 공통정보를 가져와서사용
+		    ServletContext sc = this.getServletContext();
+		    
+		    conn = (Connection)sc.getAttribute("conn");
 			
-			System.out.println("mNo 가져오나 확인용: " + mNo + " 연습용 추가 파라미터 이름: " + myName);			
-
-			ServletContext sc = this.getServletContext();
-
-			conn = (Connection) sc.getAttribute("conn");
-
-			sql = "SELECT MNAME, EMAIL, PWD, CRE_DATE";
-			sql += " FROM MEMBERS";
-			sql += " WHERE MNO = ?";
-
-			// 3단계 sql 실행 객체 준비
+			String sql = "SELECT MNO, PWD, MNAME, EMAIL, CRE_DATE"
+					+ " FROM MEMBERS"
+					+ " WHERE MNO = ?";			
+			
+			System.out.println("쿼리 수행 성공");
 			pstmt = conn.prepareStatement(sql);
-
-			// 의미 첫번째 ?에 들어갈 값이 mNo라는뜻
-			// 즉 http://localhost:8090/web04_166/member/update?mNo=1
 			pstmt.setInt(1, mNo);
-
-			// 4단계 sql문 실행
+			
 			rs = pstmt.executeQuery();
-
-			String mName = "";
-			String email = "";
-			// Date import -> java.util로
-			Date creDate = null;
-
-			while (rs.next()) {
-				// 코드 스타일(DB에 있는 테이블 속성값을 가져오는것이므로 대문자로)
-				mName = rs.getString("MNAME");
-				email = rs.getString("EMAIL");
-				creDate = rs.getDate("CRE_DATE");
-			}
-
+			
 			res.setContentType("text/html");
 			res.setCharacterEncoding("UTF-8");
-
-			PrintWriter out = res.getWriter();
-
-			String htmlStr = "";
-
-			htmlStr += "<html><head><title>회원 정보</title></head>";
-			htmlStr += "<body>";
-			htmlStr += "<h1>회원정보</h1>";
-			htmlStr += "<form action='update' method='post'>";
-			htmlStr += "번호: <input type='text' name='mNo' " + "value='" + mNo + "' readonly><br>";
-			htmlStr += "이름: <input type='text' name='name'" + " value='" + mName + "'><br>";
-			htmlStr += "이메일: <input type='text' name='email'" + " value='" + email + "'><br>";
-			htmlStr += "가입일: " + creDate + "<br>";
-			htmlStr += "<input type='submit' value='저장'>";
-			htmlStr += "<input type='reset' value='취소' onclick='location.href=\"./list\"'>";
-			htmlStr += "</form>";
-			htmlStr += "</body>";
-			htmlStr += "</html>";
-
-			out.println(htmlStr);
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+						
+			int mno = 0;
+			String mname = "";
+			String email = "";
+			Date creDate = null;
+			
+			while(rs.next()) {
+				mno = rs.getInt("MNO");
+				mname = rs.getString("MNAME");
+				email = rs.getString("EMAIL");
+				creDate = rs.getDate("CRE_DATE");
+				
+				MemberDto memberDto = new MemberDto();
+				
+				memberDto.setNo(mno);
+				memberDto.setName(mname);
+				memberDto.setEmail(email);
+				memberDto.setCreateDate(creDate);
+				
+				req.setAttribute("memberDto", memberDto);
+			}
+						
+			RequestDispatcher dispatcher = 
+					req.getRequestDispatcher("./MemberUpdateForm.jsp");
+			
+			dispatcher.include(req, res);			
+			
+		} catch (Exception e) {
+//			throw new ServletException(e); -> 개발자용
+			//에러확인하려고 서비스에서 오라클서비스랑 리스너 중지했었음
+			//예외발생시 키:error에 파라미터(매개변수) e를 담음(Exception e)
+			req.setAttribute("error", e);
+			
+			RequestDispatcher dispatcher = 
+					req.getRequestDispatcher("/Error.jsp");
+			
+			dispatcher.forward(req, res);
+			
 		} finally {
-			if (rs != null) {
+			//	6단계 jdbc 객체 메모리 회수
+			//	rs(resultSet)가 null이 아니라면 rs를 종료(자원 회수)
+			if(rs != null) {
 				try {
 					rs.close();
+					System.out.println("ResultSet 종료");
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
-			// 6 단계 jdbc 객체 메모리 회수
-			if (pstmt != null) {
+			if(pstmt != null) {
 				try {
 					pstmt.close();
+					System.out.println("쿼리 종료");
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-
-		} // finally end
-
+			
+		}
+		
+	
 	}
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		// TODO Auto-generated method stub
