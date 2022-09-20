@@ -33,8 +33,7 @@
 			 value='<%=memberDto.getEmail()%>'><br>
 		가입일: <%=memberDto.getCreateDate()%> <br>
 			  <input type='submit' value='저장'>
-			  <input type='reset' value='취소'
-			  	 onclick='location.href=\"./list\"'>
+			  <input type='reset' value='취소'>
 			  <input type='button' value='삭제'
 			  	 onclick='location.href="./delete?no=<%=memberDto.getNo()%>"'>			  			  			  
 		</form>	
