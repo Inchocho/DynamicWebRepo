@@ -25,13 +25,18 @@
 	/>	
 	
 		<form action='update' method='post'>
-		번호:  <input type='text' name='mNo' value='<%=memberDto.getNo()%>' readonly><br>
-		이름:  <input type='text' name='name' value='<%=memberDto.getName()%>'><br>
-		이메일: <input type='text' name='email' value='<%=memberDto.getEmail()%>'><br>
+		번호:  <input type='text' name='mNo'
+			 value='<%=memberDto.getNo()%>' readonly><br>
+		이름:  <input type='text' name='name'
+			 value='<%=memberDto.getName()%>'><br>
+		이메일: <input type='text' name='email'
+			 value='<%=memberDto.getEmail()%>'><br>
 		가입일: <%=memberDto.getCreateDate()%> <br>
 			  <input type='submit' value='저장'>
-			  <input type='reset' value='취소' onclick='location.href=\"./list\"'>
-			  <input type='button' value='삭제' onclick='location.href="./delete?no=<%=memberDto.getNo()%>"'>			  			  			  
+			  <input type='reset' value='취소'
+			  	 onclick='location.href=\"./list\"'>
+			  <input type='button' value='삭제'
+			  	 onclick='location.href="./delete?no=<%=memberDto.getNo()%>"'>			  			  			  
 		</form>	
 	
 	<jsp:include page="/Tail.jsp"/>
