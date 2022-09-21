@@ -15,17 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spms.dao.MemberDao;
 import spms.dto.MemberDto;
 
-@WebServlet(value="/auth/login")
+@WebServlet(value = "/auth/login")
 public class LoginServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		RequestDispatcher rd =
-				 req.getRequestDispatcher("./LoginForm.jsp");
+		RequestDispatcher rd = req.getRequestDispatcher("./LoginForm.jsp");
 
 		rd.forward(req, resp);
 
@@ -36,80 +36,45 @@ public class LoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 
 		String name = "";
 		String email = req.getParameter("email");
 		String pwd = req.getParameter("password");
 
-		String sql = "";
-		int colIndex = 1;
+		RequestDispatcher rd = null;
 
 		try {
-			ServletContext sc = this.getServletContext();
+			MemberDto memberDto = new MemberDto();
 
+			ServletContext sc = this.getServletContext();
 			conn = (Connection) sc.getAttribute("conn");
 
-			sql = "SELECT *";
-			sql += " FROM MEMBERS";
-			sql += " WHERE EMAIL = ?";
-			sql += " AND PWD = ?";
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
+			memberDto = memberDao.loginChk(email, pwd);
 
-			pstmt = conn.prepareStatement(sql);
+			HttpSession session = req.getSession();
+			session.setAttribute("memberDto", memberDto);
 
-			pstmt.setString(colIndex++, email);
-			pstmt.setString(colIndex, pwd);
-
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				email = rs.getString("email");
-				name = rs.getString("mname");
-
-				MemberDto memberDto = new MemberDto();
-
-				memberDto.setEmail(email);
-				memberDto.setName(name);
-
-				HttpSession session = req.getSession();
-				session.setAttribute("memberDto", memberDto);
-				
-				//하나씩 지우는건 remove 다 지우는건 invalidate(LogoutServlet참조)
+			// 하나씩 지우는건 remove 다 지우는건 invalidate(LogoutServlet참조)
 //				session.removeAttribute(name);
 
-				//보안을 위해 sendRedirect로 새로 화면을 연다
-				//(req,resp 객체의 저장된값이 삭제됨)
-				resp.sendRedirect("../member/list");
+			// 보안을 위해 sendRedirect로 새로 화면을 연다
+			// (req,resp 객체의 저장된값이 삭제됨)
+			resp.sendRedirect("../member/list");
 
-				//rs.next() boolean타입 true false(default true)				
-			} else if(rs.next() == false){				
-				RequestDispatcher rd 
-					= req.getRequestDispatcher("/auth/LoginForm.jsp");
-				
-				rd.forward(req,resp);
-			}
+			// rs.next() boolean타입 true false(default true)
 
-		} catch (SQLException e) {
-			throw new ServletException(e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			// printStackTrace() 개발자를 위한 오류 - 콘솔창에 오류가뜸
+			e.printStackTrace();
 
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			req.setAttribute("error", e);
 
+			rd = req.getRequestDispatcher("/Error.jsp");
+
+			rd.forward(req, resp);
 		}
+
 	}
 }

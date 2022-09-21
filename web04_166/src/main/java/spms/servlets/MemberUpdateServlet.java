@@ -71,61 +71,35 @@ public class MemberUpdateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
-//	  이작업을 이제 필터로 처리할거임(9.16 Filter)
-//	  CharacterEncodingFilter.java + web.xml 참조	     
-//	  req.setCharacterEncoding("UTF-8");
 
 		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		String email = req.getParameter("email");
-		String name = req.getParameter("name");
-
-		int mNo = Integer.parseInt(req.getParameter("mNo"));
-
-		String sql = "";
+		RequestDispatcher rd = null;
 
 		try {
+			int no = Integer.parseInt(req.getParameter("mNo"));
+			String name = req.getParameter("name");
+			String email = req.getParameter("email");
+			
 			ServletContext sc = this.getServletContext();
-
 			conn = (Connection) sc.getAttribute("conn");
-
-			sql += "UPDATE MEMBERS";
-			sql += " SET EMAIL=?, MNAME=?, MOD_DATE = SYSDATE";
-			sql += " WHERE MNO = ?";
-
-			// 3단계 sql 실행 객체 준비
-			pstmt = conn.prepareStatement(sql);
-
-			// ? 순서대로 변수(파라미터) 입력 1번째 물음표 , email ...~
-			pstmt.setString(1, email);
-			pstmt.setString(2, name);
-			pstmt.setInt(3, mNo);
-
-			// 4단계 sql문 실행
-			// SELECT조회를 제외한 나머지는 executeUpdate입니다
-			System.out.println(mNo + " 번 수정하였습니다 콘솔");
-			pstmt.executeUpdate();
+			
+			MemberDao memberDao = new MemberDao();
+			
+			memberDao.setConnection(conn);
+			memberDao.updateOne(email, name, no);
 
 			res.sendRedirect("./list");
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
+			//printStackTrace() 개발자를 위한 오류 - 콘솔창에 오류가뜸
 			e.printStackTrace();
-		} finally {
-			// 6 단계 jdbc 객체 메모리 회수
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		} // finally end
+			
+			req.setAttribute("error", e);
+			
+			rd = req.getRequestDispatcher("/Error.jsp");
+			
+			rd.forward(req, res);
+		} 
 
 	} // doPost end
 

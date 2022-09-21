@@ -44,6 +44,9 @@
 		<a href='./delete?no=${memberDto.getNo()}'>[삭제]</a><br>
 	
 	</c:forEach>
+	<!-- 세션타는지 확인용 -->
+	${sessionScope.memberDto.getEmail()}
+	${sessionScope.memberDto.getName()}
 	
 	<jsp:include page="/Tail.jsp"/>
 </body>

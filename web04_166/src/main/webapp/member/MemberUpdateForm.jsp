@@ -23,7 +23,7 @@
 
 	<jsp:include page="/Header.jsp"/>
 	<h1>회원정보</h1>
-	
+	 
 		<form action='update' method='post'>
 		번호:  <input type='text' name='mNo'
 			 value='${requestScope.memberDto.no}' readonly><br>
@@ -35,8 +35,11 @@
 			  <input type='submit' value='저장'>
 			  <input type='reset' value='취소' onclick='pageMoveListFnc();'>
 			  <input type='button' value='삭제'
-			  	 onclick='location.href="./delete?no=0"'>			  			  			  
+			  	 onclick='location.href="./delete?no=${memberDto.getNo()}"'>			  			  			  
 		</form>	
+		<!-- 세션타는지 확인용 -->
+		${sessionScope.memberDto.getEmail()}
+		${sessionScope.memberDto.getName()}
 	
 	<jsp:include page="/Tail.jsp"/>
 </body>
