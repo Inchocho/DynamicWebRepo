@@ -139,19 +139,22 @@ public class MemberDao {
 
 			rs = pstmt.executeQuery();
 			
-			while (rs.next()) {
+			if (rs.next()) {
 				no = rs.getInt("MNO");
 				name = rs.getString("MNAME");
 				email = rs.getString("EMAIL");
 				creDate = rs.getDate("CRE_DATE");
 				
 				memberDto = new MemberDto(no, name, email, creDate);
+			}else {
+				//readOnly 풀고 번호바꾸면 체크가능한 예외처리 에러
+				throw new Exception("해당 번호의 회원을 찾을 수 없습니다.");
 			}
 			
-			return memberDto;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw e;
+			
+			throw e;	//외부 에러페이지로 전달(위임) 그래서 updateServlet에 작성한 에러가 잡힌것
 		} finally {
 			if (rs != null) {
 				try {
@@ -168,7 +171,8 @@ public class MemberDao {
 				}
 			}
 
-		}		
+		}	
+		return memberDto;
 		
 	}
 	
