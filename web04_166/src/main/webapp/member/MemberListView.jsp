@@ -1,8 +1,10 @@
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="spms.dto.MemberDto"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@page import="java.util.ArrayList"%>
+<%@page import="spms.dto.MemberDto"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>	
 <!-- MVC패턴중 VIEW(9.16) -->	
+
 <!DOCTYPE html>
 <html>
 <head>
