@@ -24,12 +24,6 @@
 		<a href="../auth/login">로그인 화면</a>
 	</p>	
 	
-	<jsp:useBean 
-		id="memberList"
-		scope="request"
-		class="java.util.ArrayList"
-		type="java.util.ArrayList<MemberDto>"
-	/>
 	
 	<!-- JSP문법임 -->	
 	<!-- MemberListServlet에서 전달받은 객체 memberList의 값을 
@@ -40,19 +34,15 @@
 <!--  ARRAYLIST<MEMBERDTO> MEMBERLIST =  -->
 <!-- (ARRAYLIST<MEMBERDTO>)REQUEST.GETATTRIBUTE("MEMBERLIST"); -->
 	
-	<%
-		for(MemberDto memberDto : memberList){
-	%>
+	<c:forEach var="memberDto" items="${memberList}">
 	
-	<%=memberDto.getNo()%>,
-	<a href='./update?no=<%=memberDto.getNo()%>'><%=memberDto.getName()%></a>,
-	<%=memberDto.getEmail()%>,
-	<%=memberDto.getCreateDate()%>	
-	<a href='./delete?no=<%=memberDto.getNo()%>'>[삭제]</a>
-	<br>
-	<%
-		}
-	%>
+		${memberDto.getNo()},
+		<a href='./update?no=${memberDto.getNo()}'>${memberDto.getName()}</a>,
+		${memberDto.getEmail()},
+		${memberDto.getCreateDate()},	
+		<a href='./delete?no=${memberDto.getNo()}'>[삭제]</a><br>
+	
+	</c:forEach>
 	
 	<jsp:include page="/Tail.jsp"/>
 </body>
