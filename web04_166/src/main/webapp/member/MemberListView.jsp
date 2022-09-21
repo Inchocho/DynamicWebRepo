@@ -34,6 +34,7 @@
 <!--  ARRAYLIST<MEMBERDTO> MEMBERLIST =  -->
 <!-- (ARRAYLIST<MEMBERDTO>)REQUEST.GETATTRIBUTE("MEMBERLIST"); -->
 	
+<!-- taglib을 통해 java Bean도 대체함 -->	
 	<c:forEach var="memberDto" items="${memberList}">
 	
 		${memberDto.getNo()},
