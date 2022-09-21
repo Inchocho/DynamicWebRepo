@@ -26,11 +26,11 @@
 	
 		<form action='update' method='post'>
 		번호:  <input type='text' name='mNo'
-			 value='${memberDto.no}' readonly><br>
+			 value='${requestScope.memberDto.no}' readonly><br>
 		이름:  <input type='text' name='name'
-			 value='${memberDto.name}'><br>
+			 value='${requestScope.memberDto.name}'><br>
 		이메일: <input type='text' name='email'
-			 value='${memberDto.email}'><br>
+			 value='${requestScope.memberDto.email}'><br>
 		가입일: ${requestScope.memberDto.createDate} <br>
 			  <input type='submit' value='저장'>
 			  <input type='reset' value='취소' onclick='pageMoveListFnc();'>

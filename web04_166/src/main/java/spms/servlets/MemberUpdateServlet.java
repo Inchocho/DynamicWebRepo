@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dao.MemberDao;
 import spms.dto.MemberDto;
 
 //@WebServlet(value ="주소")를 통해 web.xml에서 서블릿선언,맵핑과정을 단축함
@@ -30,59 +31,25 @@ public class MemberUpdateServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		
 		//반복사용되는 RequestDispatcher타입 객체를 생성함
 		RequestDispatcher rd = null;
 
-		int mNo = 0;
-
-		String sql = "";
+		MemberDto memberDto = new MemberDto();
+		int no = 0;
 
 		try {
-			mNo = Integer.parseInt(req.getParameter("no"));
-			// ServletContext를 통해 AppInitServlet에 담긴 sc.setAttribute("conn", conn); (DB연결정보)
-			// 를 가져와서 사용 (DB연결 user / pwd / driver정보등 공통정보를 가져와서사용
+			no = Integer.parseInt(req.getParameter("no"));
 			ServletContext sc = this.getServletContext();
 
 			conn = (Connection) sc.getAttribute("conn");
-
-			sql = "SELECT MNO, PWD, MNAME, EMAIL, CRE_DATE"
-				+ " FROM MEMBERS"
-				+ " WHERE MNO = ?";
-
-			System.out.println("쿼리 수행 성공");
-			// ?랑 pstmt는 짝꿍 ?에 들어갈값을 넣는방법
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, mNo);
-
-			rs = pstmt.executeQuery();
-
-			res.setContentType("text/html");
-			res.setCharacterEncoding("UTF-8");
-
-			// 4개의 파라미터를 갖는 생성자를 dto에서 만들자 (MemberDto)
-			int mno = 0;
-			String mname = "";
-			String email = "";
-			Date creDate = null;
-
-			MemberDto memberDto = null;
-
-			if (rs.next()) {
-				mno = rs.getInt("MNO");
-				mname = rs.getString("MNAME");
-				email = rs.getString("EMAIL");
-				creDate = rs.getDate("CRE_DATE");
-
-				// 4개의 파라미터를 갖는 생성자를 MemberDto에서 가져다 쓰면된다
-				// 각각의 상황에 맞는 생성자를 오버로딩해서 구현한다 (일일이 set할필요없음)
-				// 기존 코드 MemberDto memberDto = new MemberDto(); 이후 일일이 memberDto.setNo(mNo)~등 작업함
-				memberDto = new MemberDto(mno, mname, email, creDate);
-			}
-
-			req.setAttribute("memberDto", memberDto);
+			
+		    MemberDao memberDao = new MemberDao();
+		    memberDao.setConnection(conn);
+		    
+		    memberDto = memberDao.selectOne(no);
+			
+		    req.setAttribute("memberDto", memberDto);
 
 			rd = req.getRequestDispatcher("./MemberUpdateForm.jsp");
 			
@@ -97,29 +64,7 @@ public class MemberUpdateServlet extends HttpServlet {
 			rd = req.getRequestDispatcher("/Error.jsp");
 			
 			rd.forward(req, res);
-		} finally {
-			// 6단계 jdbc 객체 메모리 회수
-			// rs(resultSet)가 null이 아니라면 rs를 종료(자원 회수)
-			if (rs != null) {
-				try {
-					rs.close();
-					System.out.println("ResultSet 종료");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (pstmt != null) {
-				try {
-					pstmt.close();
-					System.out.println("쿼리 종료");
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		}
+		} 
 
 	}
 

@@ -36,6 +36,7 @@ public class MemberListServlet extends HttpServlet{
 		    conn = (Connection)sc.getAttribute("conn");
 		    
 		    MemberDao memberDao = new MemberDao();
+		    //Dao는 setConnection이 반드시 필요(여기서 로직이 실행되므로)
 		    memberDao.setConnection(conn);
 		    
 		    ArrayList<MemberDto> memberList = null;
