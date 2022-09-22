@@ -12,8 +12,14 @@
 
 <script type="text/javascript">
 	function pageMoveListFnc(){
-		location.href = './list';		
+		var url = './list';
+		location.href = url;		
 	}
+	
+	function pageMoveDeleteFnc(no){
+		var url = "./delete?no=" + no;
+		location.href = url;
+	}	
 	
 </script>
 
@@ -35,8 +41,11 @@
 			  <input type='submit' value='저장'>
 			  <input type='reset' value='취소' onclick='pageMoveListFnc();'>
 			  <input type='button' value='삭제'
-			  	 onclick='location.href="./delete?no=${memberDto.getNo()}"'>			  			  			  
+			  	 onclick='pageMoveDeleteFnc(${memberDto.no});'>
 		</form>	
+		
+		<!-- onclick='location.href="./delete?no=${memberDto.getNo()}"'> 자바스크립트 함수를 작성해서 처리해줌 -->
+		
 		<!-- 세션타는지 확인용 -->
 		${sessionScope.memberDto.getEmail()}
 		${sessionScope.memberDto.getName()}

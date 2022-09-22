@@ -363,4 +363,66 @@ public class MemberDao {
 		return memberDto;
 	}
 	
+	//로그인 로직(멤버존재여부) - 강사님이랑함, 기존 loginChk라는 메소드 존재(내가만듬)
+	public MemberDto memberExist(String email, String pwd) throws Exception{
+		MemberDto memberDto = null;
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String sql = "";
+		int colIndex = 1;
+
+		try {
+			sql = "SELECT *";
+			sql += " FROM MEMBERS";
+			sql += " WHERE EMAIL = ?";
+			sql += " AND PWD = ?";
+			
+			String name = "";
+			
+			pstmt = connection.prepareStatement(sql);
+
+			pstmt.setString(colIndex++, email);
+			pstmt.setString(colIndex, pwd);
+
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				email = rs.getString("email");
+				name = rs.getString("mname");
+
+				memberDto = new MemberDto();
+
+				memberDto.setEmail(email);
+				memberDto.setName(name);
+				
+				//온전한 정보가 있으면 memberDto를 반환한다
+				return memberDto;
+			}
+			
+		} catch (Exception e){
+			e.printStackTrace();
+			throw e;
+		}finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+		// 회원 조회 안된다면 즉 온전한 정보가 없으면 null 리턴
+		return null;
+	}
+	
 }
