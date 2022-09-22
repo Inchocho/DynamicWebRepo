@@ -25,7 +25,7 @@
 	<h1>회원정보</h1>
 	 
 		<form action='update' method='post'>
-		번호:  <input type='text' name='mNo'
+		번호:  <input type='text' name='no'
 			 value='${requestScope.memberDto.no}' readonly><br>
 		이름:  <input type='text' name='name'
 			 value='${requestScope.memberDto.name}'><br>

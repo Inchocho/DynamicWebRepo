@@ -219,10 +219,57 @@ public class MemberDao {
 		}
 
 	}
+	
+	//updateOne 메소드 파라미터값을 MemberDto타입으로 받음
+	public int updateOne(MemberDto memberDto) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		int result = 0;
+		try {
+
+			String sql = "";
+
+			sql += "UPDATE MEMBERS ";
+			sql += "SET EMAIL = ?, MNAME = ?, MOD_DATE = SYSDATE ";
+			sql += "WHERE MNO = ?";
+
+			pstmt = connection.prepareStatement(sql);
+
+			pstmt.setString(1, memberDto.getEmail());
+			pstmt.setString(2, memberDto.getName());
+			pstmt.setInt(3, memberDto.getNo());
+
+			result = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			throw e; // 외부 에러페이지로 전달(위임) 그래서 updateServlet에 작성한 에러가 잡힌것
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+		
+		return result;
+
+	}	
 
 	public void deleteOne(int no) throws Exception {
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 
 		try {
 			String sql = "";
@@ -241,13 +288,6 @@ public class MemberDao {
 
 			throw e; // 외부 에러페이지로 전달(위임) 그래서 updateServlet에 작성한 에러가 잡힌것
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 			if (pstmt != null) {
 				try {
 					pstmt.close();

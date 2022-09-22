@@ -47,7 +47,6 @@
 	<!-- 세션타는지 확인용 -->
 	${sessionScope.memberDto.getEmail()}
 	${sessionScope.memberDto.getName()}
-	
 	<jsp:include page="/Tail.jsp"/>
 </body>
 

@@ -76,7 +76,7 @@ public class MemberUpdateServlet extends HttpServlet {
 		RequestDispatcher rd = null;
 
 		try {
-			int no = Integer.parseInt(req.getParameter("mNo"));
+			int no = Integer.parseInt(req.getParameter("no"));
 			String name = req.getParameter("name");
 			String email = req.getParameter("email");
 			
@@ -102,5 +102,54 @@ public class MemberUpdateServlet extends HttpServlet {
 		} 
 
 	} // doPost end
+	
+	/* MemberDto로 보냈을때
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+
+		int result = 0;
+		
+		Connection conn = null;
+		RequestDispatcher rd = null;
+
+		try {
+			int no = Integer.parseInt(req.getParameter("no"));
+			String name = req.getParameter("name");
+			String email = req.getParameter("email");
+			
+			MemberDto memberDto = new MemberDto();
+			
+			memberDto.setEmail(email);
+			memberDto.setName(name);
+			memberDto.setNo(no);
+			
+			ServletContext sc = this.getServletContext();
+			conn = (Connection) sc.getAttribute("conn");
+			
+			MemberDao memberDao = new MemberDao();
+			
+			memberDao.setConnection(conn);
+			result = memberDao.updateOne(memberDto);
+
+			if(result != 0 ) {
+				res.sendRedirect("./list");	
+			}else {
+				System.out.println("회원정보 수정에 실패하였습니다.");
+			}
+			
+
+		} catch (Exception e) {
+			//printStackTrace() 개발자를 위한 오류 - 콘솔창에 오류가뜸
+			e.printStackTrace();
+			
+			req.setAttribute("error", e);
+			
+			rd = req.getRequestDispatcher("/Error.jsp");
+			
+			rd.forward(req, res);
+		} 
+
+	}	*/
 
 }

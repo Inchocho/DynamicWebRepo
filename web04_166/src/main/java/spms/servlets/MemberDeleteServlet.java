@@ -36,10 +36,13 @@ public class MemberDeleteServlet extends HttpServlet {
 				conn = (Connection) sc.getAttribute("conn");
 				
 				MemberDao memberDao = new MemberDao();
+				//Dao에 DB를 연결
 				memberDao.setConnection(conn);
+				//Dao의 메소드: deleteOne
 				memberDao.deleteOne(no);
 	
 				res.sendRedirect("./list");
+				
 			} catch (Exception e) {
 				//printStackTrace() 개발자를 위한 오류 - 콘솔창에 오류가뜸
 				e.printStackTrace();
